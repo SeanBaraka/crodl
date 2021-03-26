@@ -5,6 +5,7 @@ import 'package:crodl/components/default_loader.dart';
 import 'package:crodl/components/input_box.dart';
 import 'package:crodl/constants/colors.dart';
 import 'package:crodl/screens/dashboard_screen.dart';
+import 'package:crodl/screens/login_screen.dart';
 import 'package:crodl/services/network_services.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -24,7 +25,7 @@ class _AccountSetupState extends State<AccountSetup> {
 
   final exhangeNameController = new TextEditingController();
 
-  bool isLoading;
+  bool isLoading, isTokenExpired;
   String invalideKeysError;
 
   @override
@@ -155,10 +156,11 @@ class _AccountSetupState extends State<AccountSetup> {
                                     (route) => false);
                               } else if (response['status'] == 400) {
                                 setState(() {
-                                  print('the response is ${response['message']}');
                                   invalideKeysError = response['message'];
                                   isLoading = false;
                                 });
+                              } else if (response['status'] == 401) {
+                                showAlertDialog(context);
                               }
                             },
                           ))
@@ -180,4 +182,32 @@ class _AccountSetupState extends State<AccountSetup> {
       ),
     );
   }
+
+  Future<void> showAlertDialog(BuildContext context) {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (c) {
+        return AlertDialog(
+          title: Text("Access Denied", style: TextStyle(fontWeight: FontWeight.bold),),
+          content: Container(
+            height: MediaQuery.of(context).size.height *  .15,
+            child: Column(
+              children: [
+                Text('Your access token has expired. Kindly login again', style: TextStyle(fontSize: 18),),
+                Spacer(),
+                TextButton(onPressed: () {
+                  Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
+                }, child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text("Login Here", style: TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.w600),),
+                ))
+              ],
+            ),
+          ),
+        );
+      }
+    );
+  }
+
 }
