@@ -4,7 +4,6 @@ import 'package:crodl/screens/dashboard_screen.dart';
 import 'package:crodl/screens/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:sms/sms.dart';
 
 String isRemembered;
 
@@ -13,7 +12,6 @@ void main() async{
   var prefs = await SharedPreferences.getInstance();
   isRemembered = prefs.getString("remembered");
 
-  print('who is remembered $isRemembered');
   runApp(MyApp());
 }
 
@@ -45,14 +43,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
-  // void checkIfLoggedIn() async{
-  //   var prefs = await SharedPreferences.getInstance();
-  //   var rememberToken = prefs.getString('remembered');
-  //
-  //   if (rememberToken == 'true') {
-  //     isLoggedIn = true;
-  //   } else {
-  //     isLoggedIn = false;
-  //   }
-  // }
 }

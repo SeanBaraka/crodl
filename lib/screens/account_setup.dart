@@ -120,7 +120,7 @@ class _AccountSetupState extends State<AccountSetup> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 0, vertical: 15),
                               child: Text(
-                                "Invalid API Key and Api Secret",
+                                invalideKeysError,
                                 style: TextStyle(
                                     fontSize: 20,
                                     color: Colors.red,
@@ -155,6 +155,7 @@ class _AccountSetupState extends State<AccountSetup> {
                                     (route) => false);
                               } else if (response['status'] == 400) {
                                 setState(() {
+                                  print('the response is ${response['message']}');
                                   invalideKeysError = response['message'];
                                   isLoading = false;
                                 });
