@@ -1,3 +1,5 @@
+import 'package:crodl/components/default_alert_dialogs.dart';
+import 'package:crodl/components/default_button.dart';
 import 'package:crodl/constants/colors.dart';
 import 'package:crodl/screens/account_setup.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,7 @@ class DashBoardScreen extends StatefulWidget {
 }
 
 class _DashBoardScreenState extends State<DashBoardScreen> {
-  dynamic leaderPositionResponse;
+  dynamic leaderPositionResponse,followerPosition;
   bool isLoading, isCopyLoading;
 
   String responseMessage;
@@ -64,15 +66,20 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                 children: [
                   TextButton(
                       onPressed: () async {
-                        var response = await getLeaderPositions();
+                        var followerPositions = await getCurrentPositions();
+
                         setState(() {
                           isLoading = true;
                         });
+                        var response = await getLeaderPositions();
+
                         if (response['status'] == 200) {
                           var leaderPosition = response['leader_position'];
+
                           setState(() {
                             isLoading = false;
                             leaderPositionResponse = leaderPosition;
+                            followerPosition = followerPositions['orderDetails'];
                           });
                         }
                       },
@@ -84,7 +91,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 : "Getting Leader Positions... please wait",
                             style: TextStyle(
                                 fontSize: 20,
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
                                 color: primaryColor),
                           ),
                           SizedBox(
@@ -122,29 +129,29 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                   "Side",
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600),
+                                      fontWeight: FontWeight.w700),
                                 ),
                               ),
                               Text("Symbol",
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w700)),
                               Text("Lev",
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w700)),
                               Text("Entry",
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w700)),
                               Text("Qty",
                                   style: TextStyle(
                                       fontSize: 18,
-                                      fontWeight: FontWeight.w600)),
+                                      fontWeight: FontWeight.w700)),
                               Container()
                             ]),
                             buildCrodlTableRow(
-                                leaderPosition: leaderPositionResponse)
+                                leaderPosition: leaderPositionResponse, actions: true)
                           ],
                         )
                       : Container(
@@ -160,7 +167,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 style: TextStyle(
                                     fontSize: 22,
                                     color: lightGreyColor,
-                                    fontWeight: FontWeight.w600),
+                                    fontWeight: FontWeight.w700),
                               )
                             ],
                           )),
@@ -175,59 +182,75 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                   SizedBox(
                     height: 20,
                   ),
-                  Table(
+                  followerPosition != null ? Table(
                     defaultColumnWidth: FixedColumnWidth(75),
                     children: [
                       TableRow(children: [
                         Container(
-                          color: primaryColor,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          alignment: AlignmentDirectional.centerStart,
+                          margin:
+                              EdgeInsets.only(bottom: 5),
                           height: 32,
                           child: Text(
                             "Side",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                                fontSize: 18, fontWeight: FontWeight.w700),
                           ),
                         ),
                         Container(
-                          color: primaryColor,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          alignment: AlignmentDirectional.centerStart,
+                          margin:
+                              EdgeInsets.only(bottom: 5),
                           height: 32,
                           child: Text("Symbol",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600)),
+                                  fontSize: 18, fontWeight: FontWeight.w700)),
                         ),
                         Container(
-                          color: primaryColor,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          alignment: AlignmentDirectional.centerStart,
+                          margin:
+                          EdgeInsets.only(bottom: 5),
                           height: 32,
                           child: Text("Leverage",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600)),
+                                  fontSize: 18, fontWeight: FontWeight.w700)),
                         ),
                         Container(
-                          color: primaryColor,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          alignment: AlignmentDirectional.centerStart,
+                          margin:
+                          EdgeInsets.only(bottom: 5),
                           height: 32,
                           child: Text("Entry",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600)),
+                                  fontSize: 18, fontWeight: FontWeight.w700)),
                         ),
                         Container(
-                          color: primaryColor,
-                          padding:
-                              EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                          margin:
+                          EdgeInsets.only(bottom: 5),
+                          alignment: AlignmentDirectional.centerStart,
                           height: 32,
                           child: Text("Qty",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.w600)),
+                                  fontSize: 18, fontWeight: FontWeight.w700)),
                         ),
-                      ]),
+                        Container()
+                      ],
+                      ),
+                      buildCrodlTableRow(leaderPosition: followerPosition, actions: false)
                     ],
+                  ) : Container(
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 25),
+                        child: Row(
+                          children: [
+                            SvgPicture.asset('assets/icons/note.svg', width: 80,),
+                            Text("You do not have any positions", style: TextStyle(fontSize:
+                            20, fontWeight: FontWeight.bold, color: lightGreyColor),)
+                          ],
+                        ),
+                      ),
+                    ),
                   )
                 ],
               ),
@@ -238,15 +261,16 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
     );
   }
 
-  TableRow buildCrodlTableRow({dynamic leaderPosition}) {
+
+  TableRow buildCrodlTableRow({dynamic leaderPosition, bool actions}) {
     final List<dynamic> columns = [
       leaderPosition['side'],
       leaderPosition['symbol'],
       leaderPosition['leverage'],
-      leaderPosition['entry_price'],
+      leaderPosition['entry_price'].toString(),
       leaderPosition['size']
     ];
-    double entryPrice = columns[3];
+    double entryPrice = double.parse(columns[3]);
 
     return TableRow(children: [
       Container(
@@ -272,42 +296,63 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
         columns[4].toString(),
         style: TextStyle(fontSize: 18),
       ),
-      IconCodlButton(
+      actions == true ? IconCodlButton(
         isCopyLoading: isCopyLoading,
         onPressed: () async {
           setState(() {
             isCopyLoading = true;
           });
+
           var positionDetails = {
             "side": columns[0].toString(),
             "symbol": columns[1].toString(),
             "leverage": columns[2].toString()
           };
+
           var copyResponse = await copyLeaderPosition(positionDetails);
+          // a case scenario where the token issued has expired
+          if (copyResponse['status'] == 200) {
+            if (copyResponse != null) {
+              var message = copyResponse['message'];
 
-          var message = copyResponse['message'];
-
-          if (message != null) {
-            setState(() {
-              isCopyLoading = false;
-            });
-            var snackBar = SnackBar(
-                padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                backgroundColor: primaryColor,
-                duration: Duration(seconds: 5),
-                elevation: 10,
-                content: Text(
-                  message,
-                  style: TextStyle(fontSize: 18, color: darkColor),
-                ));
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              if (message != null) {
+                var serverResponse = await getCurrentPositions();
+                var followerOrders = serverResponse['orderDetails'];
+                setState(() {
+                  isCopyLoading = false;
+                  followerPosition = followerOrders;
+                });
+                var snackBar = SnackBar(
+                    padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                    backgroundColor: primaryColor,
+                    duration: Duration(seconds: 5),
+                    elevation: 10,
+                    content: Text(
+                      message,
+                      style: TextStyle(fontSize: 18, color: darkColor),
+                    ));
+                ScaffoldMessenger.of(context).showSnackBar(snackBar);
+              }
+            } else {
+              setState(() {
+                isCopyLoading = false;
+              });
+              var snackBar = SnackBar(
+                  backgroundColor: Colors.redAccent,
+                  action: SnackBarAction(textColor: darkColor, onPressed: ()=>{},),
+                  content: Text("Sorry, network connection could not be established"));
+              ScaffoldMessenger.of(context).showSnackBar(snackBar);
+            }
+          } else if (copyResponse['status'] == 401) {
+              showAlertDialog(context);
           }
 
           // return SnackBar(content: Text(message));
         },
-      )
+      ) : Container()
     ]);
   }
+
 }
 
 class IconCodlButton extends StatelessWidget {

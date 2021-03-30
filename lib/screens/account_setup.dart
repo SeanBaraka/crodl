@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:crodl/components/default_alert_dialogs.dart';
 import 'package:crodl/components/default_button.dart';
 import 'package:crodl/components/default_loader.dart';
 import 'package:crodl/components/input_box.dart';
@@ -183,31 +184,6 @@ class _AccountSetupState extends State<AccountSetup> {
     );
   }
 
-  Future<void> showAlertDialog(BuildContext context) {
-    return showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (c) {
-        return AlertDialog(
-          title: Text("Access Denied", style: TextStyle(fontWeight: FontWeight.bold),),
-          content: Container(
-            height: MediaQuery.of(context).size.height *  .15,
-            child: Column(
-              children: [
-                Text('Your access token has expired. Kindly login again', style: TextStyle(fontSize: 18),),
-                Spacer(),
-                TextButton(onPressed: () {
-                  Navigator.pushNamedAndRemoveUntil(context, LoginScreen.routeName, (route) => false);
-                }, child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text("Login Here", style: TextStyle(color: primaryColor, fontSize: 20, fontWeight: FontWeight.w600),),
-                ))
-              ],
-            ),
-          ),
-        );
-      }
-    );
-  }
+
 
 }

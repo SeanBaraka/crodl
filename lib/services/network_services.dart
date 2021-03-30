@@ -17,7 +17,7 @@ Future<dynamic> userRegister(Map<String, String> userData) async {
       'Content-Type': 'application/json; charset=UTF-8',
     },
   );
-  print("respoknse ${response.body}");
+  print("response ${response.body}");
   return jsonDecode(response.body);
 }
 
@@ -73,6 +73,7 @@ Future<dynamic> getLeaderPositions() async {
     return jsonDecode(serverError);
   } // check if a status code of 200 was not returned, implying that an error occurred.
 
+
   return jsonDecode(response
       .body); // if a 200 status code was returned, then we are good to go. bye.
 }
@@ -88,6 +89,20 @@ Future<dynamic> copyLeaderPosition(Map<String, String> positionDetails) async {
 
   var response =
       await http.post(requestUrl, body: jsonEncode(positionDetails), headers: {
+    'Content-Type': 'application/json; charset=UTF-8',
+    'Authorization': 'Bearer $token'
+  });
+
+  return jsonDecode(response.body);
+}
+
+Future<dynamic> getCurrentPositions() async {
+  var url = Uri.http(serverApiUrl, '/v1/follower_orders');
+
+  var prefs = await SharedPreferences.getInstance();
+  var token = prefs.getString('authToken');
+
+  var response = await http.post(url, headers: {
     'Content-Type': 'application/json; charset=UTF-8',
     'Authorization': 'Bearer $token'
   });
